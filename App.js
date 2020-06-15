@@ -1,11 +1,41 @@
+/* eslint-disable no-undef */
 import React, {Component} from 'react';
 import {StyleSheet, View, Button, Text, TouchableOpacity} from 'react-native';
 
 class App extends Component {
   constructor() {
     super();
-    this.state = {};
   }
+
+  state = {
+    resultText: '',
+  };
+
+  buttonPressed(text) {
+    if (text === '=') {
+      return calculateResult();
+    }
+    // mengambil value yang diinputkan ketika onPress
+    this.setState({
+      resultText: this.state.resultText + text,
+    });
+  }
+
+  calculateResult() {
+    const text = this.state.resultText;
+  }
+
+  operation(text) {
+    switch (text) {
+      case 'DEL':
+        const textResult = this.state.resultText.split('');
+        textResult.pop();
+        this.setState({
+          resultText: textResult.join(''),
+        });
+    }
+  }
+
   render() {
     // melakukan perulangan untuk membuat button aplikasi
     let rows = [];
@@ -13,7 +43,7 @@ class App extends Component {
       [1, 2, 3],
       [4, 5, 6],
       [7, 8, 9],
-      [0, 0, '='],
+      ['.', 0, '='],
     ];
     // diulang sebanyak 3 kali untuk column
     for (let i = 0; i < 4; i++) {
@@ -22,7 +52,9 @@ class App extends Component {
       for (let j = 0; j < 3; j++) {
         // setiap perulangan push ke dalam array
         row.push(
-          <TouchableOpacity style={styles.btn}>
+          <TouchableOpacity
+            onPress={() => this.buttonPressed(nums[i][j])}
+            style={styles.btn}>
             {/* menampilkan text */}
             <Text style={styles.btnText}>{nums[i][j]}</Text>
           </TouchableOpacity>,
@@ -32,13 +64,15 @@ class App extends Component {
       rows.push(<View style={styles.row}>{row}</View>);
     }
 
-    let oprations = ['+', '-', '*', '/'];
+    let oprations = ['DEL', '+', '-', '*', '/'];
     let ops = [];
     // diulang sebanyak 3 kali untuk column
     for (let i = 0; i < 4; i++) {
       // melakukan push ke dalam array row
       ops.push(
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity
+          onPress={() => this.operation(oprations[i])}
+          style={styles.btn}>
           {/* menampilkan text */}
           <Text style={[styles.btnText, styles.white]}>{oprations[i]}</Text>
         </TouchableOpacity>,
@@ -48,7 +82,7 @@ class App extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.result}>
-          <Text style={styles.resultText}>11*11</Text>
+          <Text style={styles.resultText}>{this.state.resultText}</Text>
         </View>
         <View style={styles.calculation}>
           <Text style={styles.calculationText}>121</Text>
