@@ -1,3 +1,4 @@
+/* eslint-disable curly */
 /* eslint-disable no-undef */
 import React, {Component} from 'react';
 import {StyleSheet, View, Button, Text, TouchableOpacity} from 'react-native';
@@ -5,6 +6,7 @@ import {StyleSheet, View, Button, Text, TouchableOpacity} from 'react-native';
 class App extends Component {
   constructor() {
     super();
+    this.oprations = ['DEL', '+', '-', '*', '/'];
   }
 
   state = {
@@ -23,6 +25,7 @@ class App extends Component {
 
   calculateResult() {
     const text = this.state.resultText;
+    // if(text.)
   }
 
   operation(text) {
@@ -30,8 +33,24 @@ class App extends Component {
       case 'DEL':
         const textResult = this.state.resultText.split('');
         textResult.pop();
+        // menghapus abjad terakhir dari suatu string
+        // lalu set resutlt text lagi
         this.setState({
           resultText: textResult.join(''),
+        });
+        break;
+      case '+':
+      case '-':
+      case '*':
+      case '/':
+        // .split('').pop() -> untuk mengambil last karakter
+        const lastChar = this.state.resultText.split('').pop();
+        // jika last karakter lebih dari 0 atau operaion sama maka jalan jalankan operation
+        if (this.oprations.indexOf(lastChar) > 0) return;
+        if (this.state.resultText === '') return;
+        // setiap menambah operation set result text
+        this.setState({
+          resultText: this.state.resultText + text,
         });
     }
   }
@@ -64,17 +83,18 @@ class App extends Component {
       rows.push(<View style={styles.row}>{row}</View>);
     }
 
-    let oprations = ['DEL', '+', '-', '*', '/'];
     let ops = [];
     // diulang sebanyak 3 kali untuk column
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 5; i++) {
       // melakukan push ke dalam array row
       ops.push(
         <TouchableOpacity
-          onPress={() => this.operation(oprations[i])}
+          onPress={() => this.operation(this.oprations[i])}
           style={styles.btn}>
           {/* menampilkan text */}
-          <Text style={[styles.btnText, styles.white]}>{oprations[i]}</Text>
+          <Text style={[styles.btnText, styles.white]}>
+            {this.oprations[i]}
+          </Text>
         </TouchableOpacity>,
       );
     }
