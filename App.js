@@ -1,3 +1,4 @@
+/* eslint-disable no-eval */
 /* eslint-disable curly */
 /* eslint-disable no-undef */
 import React, {Component} from 'react';
@@ -11,11 +12,13 @@ class App extends Component {
 
   state = {
     resultText: '',
+    calculateText: '',
   };
 
   buttonPressed(text) {
     if (text === '=') {
-      return calculateResult();
+      // checking apakah sesuai validasi jika ya return true
+      return this.validate() && this.calculateResult();
     }
     // mengambil value yang diinputkan ketika onPress
     this.setState({
@@ -23,9 +26,27 @@ class App extends Component {
     });
   }
 
+  validate() {
+    const text = this.state.resultText;
+    // mengambil value dari suatu string berdasarkan index -1
+    // mengambil nilai terakhir jika itu index -1
+    switch (text.slice(-1)) {
+      case '+':
+      case '-':
+      case '*':
+      case '/':
+        // berarti setiap case memiliki return false
+        return false;
+    }
+    return true;
+  }
+
   calculateResult() {
     const text = this.state.resultText;
-    // if(text.)
+    // eval digunakan untuk melakukan operation dari suatu string baik itu tambah kali dll
+    this.setState({
+      calculateText: eval(text),
+    });
   }
 
   operation(text) {
@@ -72,6 +93,7 @@ class App extends Component {
         // setiap perulangan push ke dalam array
         row.push(
           <TouchableOpacity
+            key={nums[i][j]}
             onPress={() => this.buttonPressed(nums[i][j])}
             style={styles.btn}>
             {/* menampilkan text */}
@@ -80,7 +102,11 @@ class App extends Component {
         );
       }
       // melakukan push ke dalam array row
-      rows.push(<View style={styles.row}>{row}</View>);
+      rows.push(
+        <View key={i} style={styles.row}>
+          {row}
+        </View>,
+      );
     }
 
     let ops = [];
@@ -89,12 +115,11 @@ class App extends Component {
       // melakukan push ke dalam array row
       ops.push(
         <TouchableOpacity
+          key={this.oprations[i]}
           onPress={() => this.operation(this.oprations[i])}
           style={styles.btn}>
           {/* menampilkan text */}
-          <Text style={[styles.btnText, styles.white]}>
-            {this.oprations[i]}
-          </Text>
+          <Text style={styles.btnOperation}>{this.oprations[i]}</Text>
         </TouchableOpacity>,
       );
     }
@@ -105,7 +130,7 @@ class App extends Component {
           <Text style={styles.resultText}>{this.state.resultText}</Text>
         </View>
         <View style={styles.calculation}>
-          <Text style={styles.calculationText}>121</Text>
+          <Text style={styles.calculationText}>{this.state.calculateText}</Text>
         </View>
         <View style={styles.buttons}>
           <View style={styles.numbers}>{rows}</View>
@@ -125,11 +150,12 @@ const styles = StyleSheet.create({
   },
   numbers: {
     flex: 3,
-    backgroundColor: 'yellow',
+    backgroundColor: '#434343',
+    color: 'white',
   },
   operations: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: '#636363',
     justifyContent: 'space-around',
     alignItems: 'stretch',
   },
@@ -141,23 +167,23 @@ const styles = StyleSheet.create({
   },
   calculation: {
     flex: 1,
-    backgroundColor: 'green',
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'flex-end',
   },
   calculationText: {
     fontSize: 24,
-    color: 'white',
+    color: 'black',
   },
   result: {
     flex: 2,
-    backgroundColor: 'red',
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'flex-end',
   },
   resultText: {
     fontSize: 30,
-    color: 'white',
+    color: 'black',
   },
   btn: {
     flex: 1,
@@ -167,8 +193,10 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontSize: 30,
+    color: 'white',
   },
-  white: {
+  btnOperation: {
+    fontSize: 24,
     color: 'white',
   },
 });
